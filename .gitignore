@@ -15,6 +15,9 @@
 # production
 /build
 
+# build output
+/workout-app
+
 # misc
 .DS_Store
 *.pem
