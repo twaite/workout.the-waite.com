@@ -8,6 +8,7 @@ export default function Layout({ children }: { children?: any }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Workout App</title>
         <script src="https://unpkg.com/htmx.org@2.0.8"></script>
+        <link href="/app.css" rel="stylesheet" />
       </head>
       <body>
         <div id="app">{children}</div>

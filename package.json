@@ -4,8 +4,10 @@
   "module": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.ts",
-    "build": "bun build --compile src/index.ts --outfile workout-app",
+    "dev": "concurrently \"bun run --watch src/index.ts\" \"bun run dev:css\"",
+    "dev:css": "bunx tailwindcss -i ./src/styles/app.css -o ./dist/styles/app.css --watch",
+    "build": "bun run build:css && bun build --compile src/index.ts --outfile workout-app",
+    "build:css": "bunx tailwindcss -i ./src/styles/app.css -o ./dist/styles/app.css",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "oxlint",
@@ -13,11 +15,17 @@
   },
   "dependencies": {
     "@elysiajs/html": "^1.4.0",
+    "@elysiajs/static": "^1.4.7",
     "elysia": "latest"
   },
   "devDependencies": {
+    "@tailwindcss/cli": "^4.1.18",
+    "autoprefixer": "^10.4.23",
     "bun-types": "latest",
+    "concurrently": "^9.2.1",
     "oxfmt": "^0.23.0",
-    "oxlint": "^1.38.0"
+    "oxlint": "^1.38.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.18"
   }
 }
