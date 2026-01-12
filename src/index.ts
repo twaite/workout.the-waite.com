@@ -13,7 +13,15 @@ const STRAVA_REDIRECT_URI = process.env.STRAVA_REDIRECT_URI || "http://localhost
 const app = new Elysia()
   .use(staticPlugin({ assets: resolve(process.cwd(), 'dist/styles'), prefix: '/' }))
   .use(html())
-  .get("/", index)
+  .get("/", async () => {
+    try {
+      const activities = await fetchActivities(1, 10);
+      return index({ activities });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      return index({ error: message });
+    }
+  })
   .get("/strava", async () => {
     try {
       const activities = await fetchActivities();

@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Html } from "@elysiajs/html";
 
 export default function Layout({ children }: { children?: any }) {
