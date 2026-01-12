@@ -11,32 +11,27 @@ interface PageProps {
 
 export default function StravaPage({ activities, error }: PageProps) {
   return (
-    <Layout>
-      <div class="min-h-screen bg-bg-primary text-text-primary p-8">
-        <div class="max-w-4xl mx-auto">
-          <div class="flex items-center justify-between mb-8">
-            <h1 class="text-accent text-4xl font-mono font-bold">Strava Activities</h1>
-            <a
-              href="/auth/strava"
-              class="text-sm font-mono text-text-secondary hover:text-accent transition-colors"
-            >
-              Re-authenticate →
-            </a>
-          </div>
-
-          {error && (
-            <div class="bg-red-900/20 border border-red-500/50 text-red-200 p-4 rounded mb-6 font-mono text-sm">
-              <span class="font-bold">Error:</span> {error}
-            </div>
-          )}
-
-          {activities ? (
-            <Activities activities={activities} showHighlights={true} />
-          ) : (
-            <div class="text-center py-12 text-text-secondary font-mono">Loading...</div>
-          )}
+    <Layout
+      title="Activities"
+      subtitle="Your recent workouts and training data"
+      action={{ label: "Re-authenticate", href: "/auth/strava" }}
+    >
+      {error && (
+        <div class="flex items-center gap-3 bg-red-500/10 border border-red-500/30 text-red-200 p-4 rounded-lg mb-8">
+          <span class="text-red-400">⚠</span>
+          <span>
+            <strong class="font-semibold">Error:</strong> {error}
+          </span>
         </div>
-      </div>
+      )}
+
+      {activities ? (
+        <Activities activities={activities} showHighlights={true} />
+      ) : (
+        <div class="flex items-center justify-center py-20">
+          <div class="text-text-muted animate-pulse">Loading activities...</div>
+        </div>
+      )}
     </Layout>
   );
 }

@@ -1,6 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Html } from "@elysiajs/html";
 import Activity from "./activity";
+import StatCard from "./stat-card";
 
 export interface StravaActivity {
   id: number;
@@ -34,16 +35,15 @@ export interface ActivitiesProps {
 function formatDuration(seconds: number): string {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
-  const secs = seconds % 60;
   if (hours > 0) {
     return `${hours}h ${minutes}m`;
   }
-  return `${minutes}m ${secs}s`;
+  return `${minutes}m`;
 }
 
 function formatDistance(meters: number): string {
   if (meters >= 1000) {
-    return `${(meters / 1000).toFixed(2)} km`;
+    return `${(meters / 1000).toFixed(1)} km`;
   }
   return `${meters} m`;
 }
@@ -58,7 +58,7 @@ function calculateHighlights(activities: StravaActivity[]) {
   const totalElevation = activities.reduce((sum, a) => sum + a.total_elevation_gain, 0);
   const avgHeartrate =
     activities.filter((a) => a.average_heartrate).reduce((sum, a) => sum + (a.average_heartrate || 0), 0) /
-    activities.filter((a) => a.average_heartrate).length || 0;
+      activities.filter((a) => a.average_heartrate).length || 0;
 
   const longestRun = runs.length > 0 ? runs.reduce((max, a) => (a.distance > max.distance ? a : max), runs[0]) : null;
   const validRuns = runs.filter((a) => a.average_speed > 0);
@@ -86,52 +86,44 @@ function calculateHighlights(activities: StravaActivity[]) {
   };
 }
 
-export default function Activities({ activities, title = "Activities", limit, showHighlights = false }: ActivitiesProps) {
+export default function Activities({
+  activities,
+  title,
+  limit,
+  showHighlights = false,
+}: ActivitiesProps) {
   const displayActivities = limit ? activities.slice(0, limit) : activities;
   const highlights = showHighlights ? calculateHighlights(activities) : null;
 
   return (
-    <div class="space-y-6">
-      {title && <h2 class="text-2xl font-mono font-bold text-accent">{title}</h2>}
-
+    <div class="space-y-8">
+      {/* Highlights Stats */}
       {showHighlights && highlights && (
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          <div class="bg-bg-secondary rounded p-4">
-            <div class="text-text-secondary text-xs uppercase tracking-wider">Activities</div>
-            <div class="text-xl font-mono font-bold text-text-primary">{highlights.activityCount}</div>
-          </div>
-          <div class="bg-bg-secondary rounded p-4">
-            <div class="text-text-secondary text-xs uppercase tracking-wider">Distance</div>
-            <div class="text-xl font-mono font-bold text-text-primary">{highlights.totalDistance}</div>
-          </div>
-          <div class="bg-bg-secondary rounded p-4">
-            <div class="text-text-secondary text-xs uppercase tracking-wider">Time</div>
-            <div class="text-xl font-mono font-bold text-text-primary">{highlights.totalTime}</div>
-          </div>
-          <div class="bg-bg-secondary rounded p-4">
-            <div class="text-text-secondary text-xs uppercase tracking-wider">Elevation</div>
-            <div class="text-xl font-mono font-bold text-text-primary">{highlights.totalElevation}</div>
-          </div>
-          <div class="bg-bg-secondary rounded p-4">
-            <div class="text-text-secondary text-xs uppercase tracking-wider">Longest Run</div>
-            <div class="text-xl font-mono font-bold text-text-primary">{highlights.longestRun}</div>
-          </div>
-          <div class="bg-bg-secondary rounded p-4">
-            <div class="text-text-secondary text-xs uppercase tracking-wider">Avg HR</div>
-            <div class="text-xl font-mono font-bold text-text-primary">{highlights.avgHeartrate}</div>
-          </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          <StatCard label="Activities" value={String(highlights.activityCount)} />
+          <StatCard label="Distance" value={highlights.totalDistance} />
+          <StatCard label="Time" value={highlights.totalTime} />
+          <StatCard label="Elevation" value={highlights.totalElevation} />
+          <StatCard label="Longest Run" value={highlights.longestRun} />
+          <StatCard label="Avg HR" value={highlights.avgHeartrate} />
         </div>
       )}
 
-      <div class="space-y-3">
-        {displayActivities.map((activity) => (
-          <Activity activity={activity} />
-        ))}
-      </div>
+      {/* Section Title */}
+      {title && (
+        <h2 class="font-display font-medium text-2xl text-text-secondary uppercase tracking-wide">{title}</h2>
+      )}
 
-      {activities.length === 0 && (
-        <div class="text-center py-12 text-text-secondary font-mono">
-          No activities found
+      {/* Activity Cards Grid */}
+      {displayActivities.length > 0 ? (
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+          {displayActivities.map((activity) => (
+            <Activity activity={activity} />
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-16 border border-dashed border-border rounded-xl bg-bg-secondary">
+          <p class="text-text-muted">No activities found</p>
         </div>
       )}
     </div>

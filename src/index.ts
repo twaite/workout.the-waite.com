@@ -3,23 +3,30 @@ import { html } from "@elysiajs/html";
 import { staticPlugin } from "@elysiajs/static";
 import { resolve } from "path";
 
-import index from "./pages/index";
+import dashboard from "./pages/dashboard";
 import stravaPage from "./pages/strava";
 import { fetchActivities } from "./services/strava";
 
 const STRAVA_CLIENT_ID = process.env.STRAVA_CLIENT_ID
 const STRAVA_REDIRECT_URI = process.env.STRAVA_REDIRECT_URI || "http://localhost:3000/auth/strava/callback"
 
+const isDev = process.env.NODE_ENV !== "production";
+
 const app = new Elysia()
   .use(staticPlugin({ assets: resolve(process.cwd(), 'dist/styles'), prefix: '/' }))
+  .onAfterHandle(({ request, set }) => {
+    if (isDev && request.url.endsWith('.css')) {
+      set.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate';
+    }
+  })
   .use(html())
   .get("/", async () => {
     try {
       const activities = await fetchActivities(1, 10);
-      return index({ activities });
+      return dashboard({ activities });
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unknown error";
-      return index({ error: message });
+      return dashboard({ error: message });
     }
   })
   .get("/strava", async () => {
