@@ -14,6 +14,7 @@ const isDev = process.env.NODE_ENV !== "production";
 
 const app = new Elysia()
   .use(staticPlugin({ assets: resolve(process.cwd(), 'dist/styles'), prefix: '/' }))
+  .use(staticPlugin({ assets: resolve(process.cwd(), 'src/public'), prefix: '/public' }))
   .onAfterHandle(({ request, set }) => {
     if (isDev && request.url.endsWith('.css')) {
       set.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate';

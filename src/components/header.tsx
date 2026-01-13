@@ -8,7 +8,7 @@ export default function Header() {
         <div class="flex items-center justify-between h-16">
           {/* Logo */}
           <a href="/" class="flex items-center gap-3 group">
-            <span class="text-2xl">🏃</span>
+            <img src="/public/logo-cropped.png" alt="Waite Workout" style="height: 1.5rem;" class="w-auto" />
             <span class="font-display font-bold text-xl text-text-primary uppercase tracking-tight group-hover:text-accent transition-colors">
               Waite Workout
             </span>
