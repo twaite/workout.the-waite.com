@@ -50,3 +50,6 @@ data/
 
 # Env
 .env
+
+# Neovim project config
+.nvim.lua

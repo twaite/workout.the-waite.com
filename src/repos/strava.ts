@@ -1,4 +1,4 @@
-import Database from "bun:sqlite"
+import Database, { sql } from "bun:sqlite"
 
 const DB_PATH = "data/strava.db"
 
@@ -25,7 +25,8 @@ function getDb(): Database {
 
 export async function getTokens(): Promise<TokenData | null> {
   const database = getDb()
-  const result = database.query("SELECT value FROM strava_tokens WHERE key = 'tokens'").get() as { value: string } | undefined
+  const key = "tokens"
+  const result = database.query(sql`SELECT value FROM strava_tokens WHERE key = ${key}`).get() as { value: string } | undefined
 
   if (!result) return null
 
@@ -38,13 +39,13 @@ export async function getTokens(): Promise<TokenData | null> {
 
 export async function saveTokens(data: TokenData): Promise<void> {
   const database = getDb()
-  database.run(
-    "INSERT OR REPLACE INTO strava_tokens (key, value) VALUES (?, ?)",
-    ["tokens", JSON.stringify(data)]
-  )
+  const key = "tokens"
+  const value = JSON.stringify(data)
+  database.run(sql`INSERT OR REPLACE INTO strava_tokens (key, value) VALUES (${key}, ${value})`)
 }
 
 export async function deleteTokens(): Promise<void> {
   const database = getDb()
-  database.run("DELETE FROM strava_tokens WHERE key = 'tokens'")
+  const key = "tokens"
+  database.run(sql`DELETE FROM strava_tokens WHERE key = ${key}`)
 }
