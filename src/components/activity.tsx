@@ -7,6 +7,7 @@ export interface ActivityProps {
     name: string;
     type: string;
     sport_type: string;
+    start_date: string;
     start_date_local: string;
     moving_time: number;
     distance: number;
@@ -107,7 +108,7 @@ export default function Activity({ activity }: ActivityProps) {
             {activity.name}
           </h3>
           <p class="text-text-muted text-sm mt-0.5">
-            {formatDate(activity.start_date_local)} at {formatTime(activity.start_date_local)}
+            {formatDate(activity.start_date)} at {formatTime(activity.start_date)}
           </p>
         </div>
       </div>
